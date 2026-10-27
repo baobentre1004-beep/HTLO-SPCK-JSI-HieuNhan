@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký - Cửa Hàng</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 50%, #fce7f3 100%);
+      padding: 1.5rem;
+    }
+
+    .register-card {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      color: #fff;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
+    }
+
+    .form-control, .input-group-text {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+    }
+
+    .input-group-text {
+      border-right: none;
+      color: #64748b;
+    }
+
+    .form-control {
+      border-left: none;
+      font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+      background-color: #fff;
+      box-shadow: none;
+      border-color: #6366f1;
+    }
+
+    .input-group:focus-within .input-group-text {
+      border-color: #6366f1;
+      color: #4f46e5;
+      background-color: #fff;
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-main:hover {
+      background: linear-gradient(135deg, #4338ca, #4f46e5);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="register-card">
+    <div class="text-center mb-4">
+      <div class="brand-icon">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+      <h3 class="fw-bold text-dark mb-1">Tạo Tài Khoản</h3>
+      <p class="text-secondary small mb-0">Tham gia để nhận nhiều ưu đãi mua sắm hấp dẫn</p>
+    </div>
+
+    <div class="input-group mb-3">
+      <span class="input-group-text ps-3"><i class="bi bi-person"></i></span>
+      <input id="username" type="text" class="form-control py-2 pe-3" placeholder="Họ và tên">
+    </div>
+
+    <div class="input-group mb-3">
+      <span class="input-group-text ps-3"><i class="bi bi-envelope"></i></span>
+      <input id="email" type="email" class="form-control py-2 pe-3" placeholder="Email">
+    </div>
+
+    <div class="input-group mb-3">
+      <span class="input-group-text ps-3"><i class="bi bi-lock"></i></span>
+      <input id="password" type="password" class="form-control py-2 pe-3" placeholder="Mật khẩu (tối thiểu 6 ký tự)">
+    </div>
+
+    <div class="input-group mb-4">
+      <span class="input-group-text ps-3"><i class="bi bi-shield-lock"></i></span>
+      <input id="repassword" type="password" class="form-control py-2 pe-3" placeholder="Xác nhận mật khẩu">
+    </div>
+
+    <button class="btn btn-main w-100 mb-3" onclick="register()">
+      Đăng ký tài khoản
+    </button>
+
+    <p class="text-center text-secondary small mb-0">
+      Đã có tài khoản? <a href="login.html" class="fw-semibold text-decoration-none" style="color: #4f46e5;">Đăng nhập ngay</a>
+    </p>
+  </div>
+
+  <!-- Đồng bộ Firebase SDK 10.12.0 với toàn bộ dự án -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="products.js"></script>
+
+  <script>
+    async function register() {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const repassword = document.getElementById("repassword").value;
+
+      if (!username) {
+        alert("Vui lòng nhập họ và tên");
+        return;
+      }
+
+      if (!email.includes("@")) {
+        alert("Email chưa hợp lệ");
+        return;
+      }
+
+      if (password.length < 6) {
+        alert("Mật khẩu phải có ít nhất 6 ký tự");
+        return;
+      }
+
+      if (password !== repassword) {
+        alert("Mật khẩu xác nhận không khớp");
+        return;
+      }
+
+      try {
+        // 1. Tạo tài khoản trong Firebase Auth
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Cập nhật tên hiển thị trong Auth
+        await user.updateProfile({ displayName: username });
+
+        // 2. Lưu thông tin vào Firestore (Đạt Tiêu chí 5)
+        await db.collection("users").doc(user.uid).set({
+          uid: user.uid,
+          name: username,
+          email: email,
+          role: email === "admin@gamingshop.com" ? "admin" : "user",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Đăng ký tài khoản thành công!");
+        window.location.href = "login.html";
+
+      } catch (error) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            alert("Email này đã được sử dụng.");
+            break;
+          case "auth/invalid-email":
+            alert("Email không hợp lệ.");
+            break;
+          case "auth/weak-password":
+            alert("Mật khẩu quá yếu.");
+            break;
+          default:
+            alert("Lỗi: " + error.message);
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>
